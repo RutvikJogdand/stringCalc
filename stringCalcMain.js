@@ -4,8 +4,21 @@ function add(numbers) {
     if (numbers.includes(',\n') || numbers.includes('\n,')) {
         throw new Error('Invalid input: delimiter followed by newline or newline followed by delimiter');
     }
-  
+    console.log('init numbers str ===', numbers)
     let delimiters = [',', '\n'];
+     // Check for custom delimiter:
+    if (numbers.startsWith('//')) {
+      const delimiterSectionEnd = numbers.indexOf('\n'); //Get the delimiter part end
+      const delimiterSection = numbers.substring(2, delimiterSectionEnd); //Get entire delimiter section
+      numbers = numbers.substring(delimiterSectionEnd + 1);
+      customDelimiter = delimiterSection.match(/\[(.*?)\]/g);
+      if (customDelimiter) {
+        // Handle multiple delimiters
+        delimiters = customDelimiter.map(d => d.slice(1, -1));
+      } else {
+        delimiters = [delimiterSection];
+      }
+    }
     // Create regex pattern to split by delimiters
     const delimiterPattern = new RegExp(`[${delimiters.join('')}]`);
     const numberArray = numbers.split(delimiterPattern);
@@ -27,10 +40,6 @@ function add(numbers) {
     return sum;
   }
   
-//   console.log(add("1,2")); // 3
-  console.log(add("1\n2,3")); // 6
-//   console.log(add("1,\n2,3"))
-//   console.log(add("1,-2,3"));
   module.exports = {
     add
   };
